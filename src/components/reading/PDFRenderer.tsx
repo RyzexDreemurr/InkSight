@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useState, useCallback, useRef } from 'react';
-import { View, StyleSheet, Dimensions, Alert } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import Pdf from 'react-native-pdf';
 import { 

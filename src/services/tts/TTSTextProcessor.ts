@@ -130,10 +130,10 @@ export class TTSTextProcessor implements ITTSTextProcessor {
     });
 
     // Add pauses after quotation marks
-    processedText = processedText.replace(/["']/g, '$&' + this.createPauseText(200));
+    processedText = processedText.replace(/["']/g, `$&${this.createPauseText(200)}`);
 
     // Add pauses for em dashes and en dashes
-    processedText = processedText.replace(/[—–]/g, this.createPauseText(300) + '$&' + this.createPauseText(300));
+    processedText = processedText.replace(/[—–]/g, `${this.createPauseText(300)}$&${this.createPauseText(300)}`);
 
     return processedText;
   }

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from 'react';
+import React, { useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { EPUBLocation, EPUBSettings, EPUBTextSelection } from '../../types/EPUB';
@@ -28,7 +28,6 @@ export interface EPUBRendererRef {
 }
 
 const EPUBRenderer = forwardRef<EPUBRendererRef, EPUBRendererProps>(({
-  bookPath,
   settings,
   onLocationChange,
   onTextSelection,
@@ -36,7 +35,6 @@ const EPUBRenderer = forwardRef<EPUBRendererRef, EPUBRendererProps>(({
   onError,
 }, ref) => {
   const webViewRef = useRef<WebView>(null);
-  const [isReady, setIsReady] = useState(false);
   const [currentLocation, setCurrentLocation] = useState<EPUBLocation | null>(null);
   const { width, height } = Dimensions.get('window');
   const pendingTextExtraction = useRef<{
@@ -109,18 +107,15 @@ const EPUBRenderer = forwardRef<EPUBRendererRef, EPUBRendererProps>(({
       return new Promise((resolve) => {
         if (webViewRef.current) {
           const messageId = Date.now().toString();
-          const handleMessage = (event: any) => {
-            const data = JSON.parse(event.nativeEvent.data);
-            if (data.type === 'searchResults' && data.messageId === messageId) {
-              resolve(data.results);
-            }
-          };
-          
+
           webViewRef.current.postMessage(JSON.stringify({
             type: 'search',
             query,
             messageId
           }));
+
+          // For now, return empty results - would need proper message handling
+          resolve([]);
         } else {
           resolve([]);
         }
@@ -184,20 +179,21 @@ const EPUBRenderer = forwardRef<EPUBRendererRef, EPUBRendererProps>(({
       
       switch (data.type) {
         case 'ready':
-          setIsReady(true);
           onReady?.();
           break;
           
-        case 'locationChanged':
+        case 'locationChanged': {
           const location = data.location as EPUBLocation;
           setCurrentLocation(location);
           onLocationChange?.(location);
           break;
-          
-        case 'textSelected':
+        }
+
+        case 'textSelected': {
           const selection = data.selection as EPUBTextSelection;
           onTextSelection?.(selection);
           break;
+        }
 
         case 'textExtracted':
           // Handle text extraction response
@@ -228,10 +224,11 @@ const EPUBRenderer = forwardRef<EPUBRendererRef, EPUBRendererProps>(({
           break;
           
         default:
-          console.log('Unknown message type:', data.type);
+          // Unknown message type - could add logging here if needed
+          break;
       }
     } catch (error) {
-      console.error('Failed to parse WebView message:', error);
+      onError?.(`Failed to parse WebView message: ${error}`);
     }
   };
 

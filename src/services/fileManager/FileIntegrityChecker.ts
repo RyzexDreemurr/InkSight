@@ -1,11 +1,8 @@
 import * as FileSystem from 'expo-file-system';
-import * as Crypto from 'expo-crypto';
-import { 
-  FileIntegrityResult, 
-  IntegrityIssue, 
+import {
+  FileIntegrityResult,
   IntegrityCheckOptions,
-  IntegrityCheckError,
-  ProgressCallback 
+  ProgressCallback
 } from '../../types/FileManagement';
 import { Book } from '../../types/Book';
 import { formatDetector } from '../../utils/formatDetector';
@@ -152,7 +149,6 @@ export class FileIntegrityChecker {
     options: IntegrityCheckOptions = {},
     progressCallback?: ProgressCallback
   ): Promise<FileIntegrityResult[]> {
-    const filePaths = books.map(book => book.filePath);
     const expectedHashes = books.reduce((acc, book) => {
       if (book.fileHash) {
         acc[book.filePath] = book.fileHash;
@@ -205,7 +201,7 @@ export class FileIntegrityChecker {
         encoding: FileSystem.EncodingType.Base64,
         length: 1024
       });
-    } catch (error) {
+    } catch (_error) {
       result.isValid = false;
       result.issues.push({
         type: 'permission',
@@ -305,12 +301,12 @@ export class FileIntegrityChecker {
     }
   }
 
-  private async scanEPUBStructure(filePath: string, result: FileIntegrityResult): Promise<void> {
+  private async scanEPUBStructure(_filePath: string, _result: FileIntegrityResult): Promise<void> {
     // TODO: Implement EPUB-specific structure validation
     // Check for required files like META-INF/container.xml, content.opf, etc.
   }
 
-  private async scanPDFStructure(filePath: string, result: FileIntegrityResult): Promise<void> {
+  private async scanPDFStructure(_filePath: string, _result: FileIntegrityResult): Promise<void> {
     // TODO: Implement PDF-specific structure validation
     // Check PDF header, trailer, cross-reference table, etc.
   }
@@ -322,7 +318,7 @@ export class FileIntegrityChecker {
         encoding: FileSystem.EncodingType.UTF8,
         length: 1024
       });
-    } catch (error) {
+    } catch (_error) {
       result.issues.push({
         type: 'corruption',
         severity: 'low',
@@ -356,10 +352,10 @@ export class FileIntegrityChecker {
     }
   }
 
-  private async attemptRepair(filePath: string, result: FileIntegrityResult): Promise<void> {
+  private async attemptRepair(_filePath: string, result: FileIntegrityResult): Promise<void> {
     // TODO: Implement basic repair attempts based on issue types
     // For now, just add repair suggestions
-    const repairableIssues = result.issues.filter(issue => 
+    const repairableIssues = result.issues.filter(issue =>
       issue.type === 'permission' || issue.type === 'format'
     );
 

@@ -220,7 +220,6 @@ export class TTSService implements ITTSService {
     
     // If voice changed and currently playing, restart with new voice
     if (newSettings.voice && this.state.isPlaying) {
-      const currentSentence = this.state.currentSentence;
       Speech.stop();
       await this.speakCurrentSentence();
     }

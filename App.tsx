@@ -13,8 +13,10 @@ export default function App() {
     <SafeAreaProvider>
       <AppProvider>
         <LibraryProvider>
-          <AppNavigator />
-          <StatusBar style="auto" />
+          <ReaderProvider>
+            <AppNavigator />
+            <StatusBar style="auto" />
+          </ReaderProvider>
         </LibraryProvider>
       </AppProvider>
     </SafeAreaProvider>

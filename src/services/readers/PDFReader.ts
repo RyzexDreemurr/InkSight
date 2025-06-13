@@ -1,12 +1,11 @@
 import { BaseReader, BookContent, Position, SearchResult, Chapter } from './BaseReader';
 import { Book } from '../../types/Book';
-import { 
-  PDFSettings, 
-  PDFMetadata, 
-  PDFPosition, 
-  PDFSearchResult, 
+import {
+  PDFSettings,
+  PDFMetadata,
+  PDFPosition,
   PDFTextExtractionOptions,
-  DEFAULT_PDF_SETTINGS 
+  DEFAULT_PDF_SETTINGS
 } from '../../types/PDF';
 
 export class PDFReader extends BaseReader {
@@ -58,7 +57,6 @@ export class PDFReader extends BaseReader {
 
       return bookContent;
     } catch (error) {
-      console.error('Failed to load PDF:', error);
       throw new Error(`Failed to load PDF: ${error}`);
     }
   }
@@ -101,7 +99,7 @@ export class PDFReader extends BaseReader {
     for (let page = startPage; page <= endPage; page++) {
       const pageText = await this.getPageText(page);
       if (pageText) {
-        extractedText += pageText + '\n';
+        extractedText += `${pageText}\n`;
       }
     }
     
@@ -167,7 +165,6 @@ export class PDFReader extends BaseReader {
       this.pageTexts.set(page, text);
       return text;
     } catch (error) {
-      console.error(`Failed to extract text from page ${page}:`, error);
       return null;
     }
   }
@@ -177,7 +174,6 @@ export class PDFReader extends BaseReader {
       const text = await this.getPageText(this.currentPage);
       return text || '';
     } catch (error) {
-      console.error('Failed to get current page text:', error);
       return '';
     }
   }
@@ -186,8 +182,7 @@ export class PDFReader extends BaseReader {
     const {
       startPage = 1,
       endPage = this.totalPages,
-      preserveLayout = false,
-      includeAnnotations = false
+      preserveLayout = false
     } = options;
 
     let extractedText = '';
@@ -198,7 +193,7 @@ export class PDFReader extends BaseReader {
         if (preserveLayout) {
           extractedText += `\n--- Page ${page} ---\n${pageText}\n`;
         } else {
-          extractedText += pageText + ' ';
+          extractedText += `${pageText} `;
         }
       }
     }

@@ -4,7 +4,7 @@ import { EPUBBook, EPUBRendition, EPUBLocation, EPUBMetadata, EPUBTableOfContent
 import * as FileSystem from 'expo-file-system';
 
 // Import ePub.js - we'll need to handle this properly for React Native
-declare const ePub: any;
+// declare const ePub: any; // Commented out as not currently used
 
 export class EPUBReader extends BaseReader {
   private epubBook: EPUBBook | null = null;
@@ -24,7 +24,7 @@ export class EPUBReader extends BaseReader {
       const fileUri = this.book.filePath;
       
       // Read the EPUB file as base64 for processing
-      const fileContent = await FileSystem.readAsStringAsync(fileUri, {
+      await FileSystem.readAsStringAsync(fileUri, {
         encoding: FileSystem.EncodingType.Base64,
       });
 
@@ -68,7 +68,6 @@ export class EPUBReader extends BaseReader {
 
       return bookContent;
     } catch (error) {
-      console.error('Failed to load EPUB:', error);
       throw new Error(`Failed to load EPUB: ${error}`);
     }
   }
@@ -94,7 +93,6 @@ export class EPUBReader extends BaseReader {
       const cfi = this.calculateCFIFromPercentage(percentage);
       await this.rendition.goto(cfi);
     } catch (error) {
-      console.error('Failed to navigate to page:', error);
       throw error;
     }
   }
@@ -114,7 +112,6 @@ export class EPUBReader extends BaseReader {
         await this.navigateToPage(position.page);
       }
     } catch (error) {
-      console.error('Failed to navigate to position:', error);
       throw error;
     }
   }
@@ -125,16 +122,12 @@ export class EPUBReader extends BaseReader {
     }
 
     try {
-      // Extract text between CFI positions
-      const startCfi = startPos.cfi;
-      const endCfi = endPos.cfi;
-
       // For now, extract current page text
       // In a full implementation, this would extract text between specific CFI ranges
+      // startPos and endPos would be used to define the extraction range
       return this.getCurrentPageText();
     } catch (error) {
-      console.error('Failed to extract text:', error);
-      throw error;
+      throw new Error(`Failed to extract text: ${error}`);
     }
   }
 
@@ -144,8 +137,7 @@ export class EPUBReader extends BaseReader {
       // For now, return a placeholder that indicates the method is ready
       return 'Current EPUB page text would be extracted here via WebView integration';
     } catch (error) {
-      console.error('Failed to get current page text:', error);
-      throw error;
+      throw new Error(`Failed to get current page text: ${error}`);
     }
   }
 
@@ -162,7 +154,7 @@ export class EPUBReader extends BaseReader {
     };
   }
 
-  async search(query: string): Promise<SearchResult[]> {
+  async search(_query: string): Promise<SearchResult[]> {
     if (!this.epubBook) {
       throw new Error('EPUB not loaded');
     }
@@ -172,7 +164,6 @@ export class EPUBReader extends BaseReader {
       // For now, return empty results
       return [];
     } catch (error) {
-      console.error('Failed to search EPUB:', error);
       return [];
     }
   }
@@ -191,7 +182,6 @@ export class EPUBReader extends BaseReader {
     try {
       await this.rendition.goto(chapterId);
     } catch (error) {
-      console.error('Failed to navigate to chapter:', error);
       throw error;
     }
   }
@@ -204,7 +194,6 @@ export class EPUBReader extends BaseReader {
     try {
       this.rendition.annotations.highlight(cfiRange, { color });
     } catch (error) {
-      console.error('Failed to add highlight:', error);
       throw error;
     }
   }
@@ -217,7 +206,6 @@ export class EPUBReader extends BaseReader {
     try {
       this.rendition.annotations.remove(cfiRange, 'highlight');
     } catch (error) {
-      console.error('Failed to remove highlight:', error);
       throw error;
     }
   }
@@ -229,7 +217,7 @@ export class EPUBReader extends BaseReader {
     return `epubcfi(/6/2[cover]!/4/1:${Math.floor(percentage)})`;
   }
 
-  private calculatePercentageFromCFI(cfi: string): number {
+  private calculatePercentageFromCFI(_cfi: string): number {
     // This would calculate percentage from CFI
     // For now, return a placeholder
     return 0;

@@ -18,6 +18,15 @@ export default [
       globals: {
         console: 'readonly',
         __DEV__: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        NodeJS: 'readonly',
+        HTMLElement: 'readonly',
+        Range: 'readonly',
+        global: 'readonly',
+        Buffer: 'readonly',
       },
     },
     plugins: {
